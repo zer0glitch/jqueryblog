@@ -1,12 +1,3 @@
+<?xml version="1.0"?>
 <feed>
-  <entry>
-    <id>1</id>
-    <title>1st Entry</title>
-    <text>This text can contain all types of chars</text>
-  </entry>
-  <entry>
-    <id>2</id>
-    <title>2st Entry</title>
-    <text>This text can contain all types of chars</text>
-  </entry>
 </feed>
