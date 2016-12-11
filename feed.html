@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>microblog</title>
+
+  <link rel="stylesheet" type="text/css" href="microblog.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	<script type="text/javascript">
+
+$(document).ready(function(){
+   entries = []
+   $.ajax({
+			type: "GET" ,
+			url: "db/feed.xml" ,
+			dataType: "xml" ,
+			success: function(xml) {
+
+				var xmlDoc = $.parseXML( xml );   
+        var i = 0;
+				$(xml).find('entry').each(function(){
+          id = $(this).find('id');
+          title = $(this).find('title').text();
+          text = $(this).find('text').text();
+					$("#feedTable").append("<tr><td class='mb-title'>" + title + "<td></tr>");
+					$("#feedTable").append("<tr><td class='mb-entry'>" + text + "<td></tr>");
+          e = new entry(id,title,text)
+          entries[i++] = e;
+				 //$("#feed").append('<li>' + $(this).text() + '</li>');  
+				});        
+			}
+			//entries.forEach( function (entry) {
+			//	console.log(entry);
+			//});
+	});
+
+
+	function entry(id,title,text){
+    this.id = id
+    this.title = title
+    this.text = text
+	};
+});
+
+  </script>
+</head>
+<body>
+
+This is a microblog
+
+<div id="feed">
+	<table id="feedTable" class="microblog">
+	</table>
+</div>
+
+</body>
+</html>

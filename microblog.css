@@ -1,0 +1,26 @@
+table.microblog {
+  width: "100%"
+  padding: 4px
+  cell-padding: 10px
+}
+
+td.mb-title {
+  background-color: #008dad;
+  color: #dfdfdf;
+  font-family: arial;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px
+}
+
+td.mb-entry {
+  background-color: #efefef;
+  color: #000000;
+  font-family: arial;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  padding: 10px
+
+}
