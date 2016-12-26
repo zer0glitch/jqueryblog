@@ -12,9 +12,11 @@ $(document).ready(function(){
    entries = []
    $.ajax({
 			type: "GET" ,
-			url: "db/feed.xml" ,
+			url: "admin/feed.php?format=xml" ,
 			dataType: "xml" ,
 			success: function(xml) {
+
+        console.log(xml);
 
 				var xmlDoc = $.parseXML( xml );   
         var i = 0;
