@@ -12,7 +12,7 @@
 $(document).ready(function(){
    $.ajax({
 			type: "GET" ,
-			url: "../db/feed.xml" ,
+			url: "feed.php" ,
 			dataType: "xml" ,
 			success: function(xml) {
 
@@ -37,9 +37,10 @@ $(document).ready(function(){
   $("#contactform").submit(function() {
     $.ajax({
 			type: "POST" ,
-			url: "add.php" ,
+			url: "setup.php" ,
       data: $(this).serialize(),
 			success: function(message) {
+	alert(message);
         $('#message').html("Success");
         //loadTable();
         $("#feedTable").empty();

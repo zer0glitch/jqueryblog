@@ -1,37 +1,61 @@
 <?php
-$doc = new DOMDocument();
-$doc->load( '../db/feed.xml' );
-
-#echo "Loading....\n";
  
-$entries = $doc->getElementsByTagName( "entry" );
+  // Set default timezone
+  date_default_timezone_set('UTC');
 
-$date = date_create();
-
-
-$doc->formatOutput = true;
-$feed = $doc->getElementsByTagName( "feed" );
+  try {
+    /**************************************
+    * Create databases and                *
+    * open connections                    *
+    **************************************/
  
-$r = $doc->createElement( "entry" );
-$feed->item(0)->appendChild( $r );
-
-$id = $doc->createElement( "id" );
-$id->appendChild($doc->createTextNode( date_timestamp_get($date) ));
-$r->appendChild( $id );
+    // Create (connect to) SQLite database in file
+    $file_db = new PDO('sqlite:microblog.sqlite3');
+    // Set errormode to exceptions
+    $file_db->setAttribute(PDO::ATTR_ERRMODE, 
+                            PDO::ERRMODE_EXCEPTION);
  
-$title = $doc->createElement( "title" );
-$title->appendChild($doc->createTextNode( $_POST['title'] ));
-$r->appendChild( $title );
  
-$text = $doc->createElement( "text" );
-$text->appendChild($doc->createTextNode( $_POST['text'] ));
-$r->appendChild( $text );
+    /**************************************
+    * Create tables                       *
+    **************************************/
  
+    // Create table messages
+    $file_db->exec("CREATE TABLE IF NOT EXISTS messages (
+                    id time, 
+                    title TEXT, 
+                    message TEXT)");
+ 
+ 
+    /**************************************
+    * Play with databases and tables      *
+    **************************************/
+ 
+    // Prepare INSERT statement to SQLite3 file db
+    $insert = "INSERT INTO messages (title, message, id) 
+                VALUES (:title, :message, :id)";
+    $stmt = $file_db->prepare($insert);
 
-$myfile = fopen("../db/feed.xml", "w") or die("Unable to open file!");
-fwrite($myfile, $doc->saveXML());
-fclose($myfile);
+    // Bind parameters to statement variables
+    $stmt->bindParam(':title', $_POST['title']);
+    $stmt->bindParam(':message', $_POST['text']);
+    $stmt->bindParam(':id', date_timestamp_get($date));
 
-echo "Success";
-
+    $stmt->execute();
+ 
+    echo "Success\n";
+ 
+ 
+    /**************************************
+    * Close db connections                *
+    **************************************/
+ 
+    // Close file db connection
+    $file_db = null;
+  }
+  catch(PDOException $e) {
+    // Print PDOException message
+    echo $e->getMessage();
+  }
 ?>
+
