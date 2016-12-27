@@ -34,8 +34,10 @@
     $date = time();
  
     // Prepare INSERT statement to SQLite3 file db
-    $insert = "INSERT INTO messages (title, message, id) 
-                VALUES (:title, :message, :id)";
+    $update = "update messages set title=:title,
+                                   message=:message
+                      where id = :id");
+    
     $stmt = $file_db->prepare($insert);
 
     // Bind parameters to statement variables

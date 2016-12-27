@@ -43,35 +43,52 @@
 
    entries = []
 
-$(document).ready(function(){
+    $(document).ready(function(){
 
-  $('#feedTable').dynatable({
-	  dataset: {
-	    ajax: true,
-	    ajaxUrl: 'feed.php',
-	    ajaxOnLoad: true,
-      perPageDefault: 5,
-      perPageOptions: [3, 5, 10],
-	    records: []
-	  }
-  });
+      $('#feedTable').dynatable({
+        dataset: {
+          ajax: true,
+          ajaxUrl: 'feed.php',
+          ajaxOnLoad: true,
+          perPageDefault: 3,
+          perPageOptions: [3, 5, 10],
+          records: []
+        },
+        table: {
+          bodyRowSelector: '11'
+        }
+      });
 
-  $("#contactform").submit(function() {
-    $.ajax({
-        type: "POST" ,
-        url: "add.php" ,
-        data: $(this).serialize(),
-			  success: function(message) {
-        alert(message);
-        $('#message').html("Success");
-        //loadTable();
-        $("#feedTable").empty();
-        window.location='index.html';
-      }
+      $("#entryform").submit(function() {
+        $.ajax({
+            type: "POST" ,
+            url: "add.php" ,
+            data: $(this).serialize(),
+            success: function(message) {
+            alert(message);
+            $('#message').html("Success");
+            //loadTable();
+            $("#feedTable").empty();
+            window.location='index.html';
+          }
+        });
+      });
+
     });
-  });
 
-});
+    function deleteEntry(id) {
+        $.ajax({
+            type: "GET" ,
+            url: "delete.php" ,
+            data: 'id=' + id,
+            success: function(message) {
+              alert(message);
+              $('#message').html("Success");
+              window.location='index.html';
+            }
+        });
+    }
+
 
   </script>
 </head>
@@ -86,6 +103,7 @@ $(document).ready(function(){
         <th class="dynatable-head">id</th>
         <th class="dynatable-head">title</th>
         <th class="dynatable-head">text</th>
+        <th class="dynatable-head">links</th>
       </thead>
       <tbody>
       </tbody>
@@ -94,7 +112,7 @@ $(document).ready(function(){
 
   <div id="wrap" class="container">
 
-    <form id="contactform" >
+    <form id="entryform" >
 
       <div class="row">
         <div class="6u$ 12u$(mobile)"><input type="text" name="title" placeholder="title" /></div>

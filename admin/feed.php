@@ -38,7 +38,7 @@
           echo "<entry>";
           echo "<id><![CDATA[" . $row['id'] . "]]></id>";
           echo "<title><![CDATA[" . $row['title'] . "]]></title>";
-          echo "<text><![CDATA[" . $row['message'] . "]]></text>";
+          echo "<text><![CDATA[" . nl2br($row['message']) . "]]></text>";
           echo "</entry>";
       }
       echo "</feed>";
@@ -55,7 +55,9 @@
             $rowData = (object)array(
                 'id' => $row['id'],
                 'title' => $row['title'],
-                'text' => $row['message']
+                'text' => $row['message'],
+                'links' => "<a href=edit.php?id=" . $row['id'] . ">edit</a>&nbsp;" .
+                           "<a href=delete.php?id=" . $row['id'] . ">delete</a>" 
             );
           if (($count >= $start) and ($count < $end)) {
             $numRows = $numRows + 1;
