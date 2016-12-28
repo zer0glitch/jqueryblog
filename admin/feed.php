@@ -25,62 +25,73 @@
                     id time, 
                     title TEXT, 
                     message TEXT)");
- 
 
-    // Select all data from memory db messages table 
-    $result = $file_db->query('SELECT * FROM messages order by id desc');
+    $len = 0;
 
+    $query_string = "";
+    if (isset($_GET['id'])) { 
+      $query_string = "SELECT * FROM messages where id = '" . $_GET['id'] . "'";
+      $len = 1;
+    } else {
+      $query_string = "SELECT * FROM messages order by id desc";
+      $countResult = $file_db->query('SELECT count(*) as counted FROM messages');
+      foreach($countResult as $crow) {
+        $len = $crow['counted']; 
+      }
+    }
+
+    error_log(" query_string: " . $query_string);
+    $result = $file_db->query($query_string);
 
     if ($_GET['format'] == 'xml') {
       echo "<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n";
       echo "<feed>";
       foreach($result as $row) {
-          echo "<entry>";
-          echo "<id><![CDATA[" . $row['id'] . "]]></id>";
-          echo "<title><![CDATA[" . $row['title'] . "]]></title>";
-          echo "<text><![CDATA[" . nl2br($row['message']) . "]]></text>";
-          echo "</entry>";
+        echo "<entry>";
+        echo "<id><![CDATA[" . $row['id'] . "]]></id>";
+        echo "<title><![CDATA[" . $row['title'] . "]]></title>";
+        echo "<text><![CDATA[" . nl2br($row['message']) . "]]></text>";
+        echo "</entry>";
       }
       echo "</feed>";
 
     } else {
-      $start = ($_GET['perPage'] * ($_GET['page'] - 1));
-
-      $end = ($_GET['perPage'] * ($_GET['page']));
-
       $numRows = 0;
       $data = array();
-      $count = 0;
-      foreach($result as $row) {
-            $rowData = (object)array(
-                'id' => $row['id'],
-                'title' => $row['title'],
-                'text' => $row['message'],
-                'links' => "<a href=edit.php?id=" . $row['id'] . ">edit</a>&nbsp;" .
-                           "<a href=delete.php?id=" . $row['id'] . ">delete</a>" 
-            );
-          if (($count >= $start) and ($count < $end)) {
-            $numRows = $numRows + 1;
-            $data[] = $rowData;
-          }
-          $count = $count + 1;
-      }
-
-    
-      $json = json_encode($data);
+      $count = 1;
       echo "{";
-      echo "\"records\": ";
-      echo $json;
-      echo ",";
-      echo "\"queryRecordCount\": ";
-      echo $count;
-      echo ",";
-      echo "\"totalRecordCount\":";
-      echo  $count;
+      echo "\"data\": ";
+      echo "[";
+
+
+      foreach($result as $row) {
+        $rowData = (object)array(
+            'id' => $row['id'],
+            'title' => $row['title'],
+            'text' => $row['message'],
+            'links' => "<a href=edit.php?id=" . $row['id'] . ">edit</a>&nbsp;" .
+                       "<a href=delete.php?id=" . $row['id'] . ">delete</a>" 
+        );
+        $numRows = $numRows + 1;
+        $data[] = $rowData;
+        echo "[";
+        echo "\"" . $row['id'] . "\",";
+        echo "\"" . $row['title'] . "\",";
+        echo "" . json_encode($row['message']) . ",";
+        echo "\"" . "" . "\"";
+        echo "]";
+
+        // Test for last
+        error_log("count " . $count . " == " . $len);
+         if ($count != $len) {
+            echo ",";
+         }
+         $count = $count + 1;
+      }
+      echo "]";
       echo "}";
 
     }
-
  
     /**************************************
     * Close db connections                *
